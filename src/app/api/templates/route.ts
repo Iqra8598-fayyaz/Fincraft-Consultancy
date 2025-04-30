@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
+import { writeFile, readdir, unlink } from 'fs/promises';
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 
@@ -9,24 +9,24 @@ if (!existsSync(templatesDir)) {
   mkdirSync(templatesDir, { recursive: true });
 }
 
-// Initial templates list
-let templates = [
-  {
-    id: '1',
-    name: 'Tax Planner',
-    file: 'tax-planner.xlsx',
-    description: 'Comprehensive tax planning template for individuals and businesses'
-  },
-  {
-    id: '2',
-    name: 'Expense Tracker',
-    file: 'expense-tracker.xlsx',
-    description: 'Track and categorize your expenses for better tax management'
-  }
-];
-
+// Get all templates
 export async function GET() {
   try {
+    const files = await readdir(templatesDir);
+    const templates = await Promise.all(
+      files.map(async (filename) => {
+        const [id, name, ...rest] = filename.split('-');
+        const description = rest.join('-').replace('.xlsx', '');
+        return {
+          id,
+          title: name.replace(/-/g, ' '),
+          description,
+          category: 'Uploaded',
+          downloadUrl: `/templates/${filename}`,
+          icon: '📄'
+        };
+      })
+    );
     return NextResponse.json(templates);
   } catch (error) {
     console.error('Error fetching templates:', error);
@@ -37,16 +37,17 @@ export async function GET() {
   }
 }
 
+// Upload new template
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const name = formData.get('name') as string;
+    const title = formData.get('title') as string;
     const description = formData.get('description') as string;
 
-    if (!file || !name) {
+    if (!file || !title) {
       return NextResponse.json(
-        { error: 'File and name are required' },
+        { error: 'File and title are required' },
         { status: 400 }
       );
     }
@@ -61,7 +62,7 @@ export async function POST(request: Request) {
 
     // Generate unique filename
     const timestamp = Date.now();
-    const filename = `${name.toLowerCase().replace(/\s+/g, '-')}-${timestamp}.xlsx`;
+    const filename = `${timestamp}-${title.toLowerCase().replace(/\s+/g, '-')}-${description?.toLowerCase().replace(/\s+/g, '-') || 'template'}.xlsx`;
     const filepath = join(templatesDir, filename);
 
     // Convert File to Buffer and save
@@ -69,20 +70,42 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(bytes);
     await writeFile(filepath, buffer);
 
-    // Add to templates list
-    const newTemplate = {
-      id: (templates.length + 1).toString(),
-      name,
-      file: filename,
-      description: description || ''
-    };
-    templates.push(newTemplate);
-
-    return NextResponse.json(newTemplate);
+    return NextResponse.json({
+      id: timestamp.toString(),
+      title,
+      description,
+      category: 'Uploaded',
+      downloadUrl: `/templates/${filename}`,
+      icon: '📄'
+    });
   } catch (error) {
     console.error('Error uploading template:', error);
     return NextResponse.json(
       { error: 'Failed to upload template' },
+      { status: 500 }
+    );
+  }
+}
+
+// Delete template
+export async function DELETE(request: Request) {
+  try {
+    const { filename } = await request.json();
+    const filepath = join(templatesDir, filename);
+    
+    if (existsSync(filepath)) {
+      await unlink(filepath);
+      return NextResponse.json({ success: true });
+    }
+    
+    return NextResponse.json(
+      { error: 'File not found' },
+      { status: 404 }
+    );
+  } catch (error) {
+    console.error('Error deleting template:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete template' },
       { status: 500 }
     );
   }

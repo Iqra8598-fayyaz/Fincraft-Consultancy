@@ -2,198 +2,220 @@
 import React, { useState } from 'react';
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [submitted, setSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate form submission
-    setTimeout(() => {
-      setSubmitted(true);
-      setForm({ name: '', email: '', message: '' });
+    setSubmitError('');
+
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setSubmitSuccess(true);
+      setFormData({ name: '', email: '', phone: '', message: '' });
+    } catch (error) {
+      setSubmitError('Failed to send message. Please try again.');
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-24 px-4 bg-gradient-to-br from-blue-900 to-blue-800 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10"></div>
+      <section className="relative py-32 px-4 bg-gradient-to-br from-blue-900 to-blue-800 overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/50 to-blue-800/50 opacity-10"></div>
+        </div>
         <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6 animate-fade-in-up">
+          <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-6 animate-fade-in-up">
             Contact Us
           </h1>
           <p className="text-xl text-blue-100 mb-8 animate-fade-in-up animation-delay-200">
-            Get in touch with Fincraft Consulting for expert tax advice
+            Get in touch with our team of tax experts
           </p>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 to-transparent"></div>
       </section>
 
-      {/* Contact Form Section */}
-      <section className="py-16 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {/* Contact Information */}
-            <div className="animate-fade-in">
-              <h2 className="text-2xl font-bold text-blue-800 mb-6">Get In Touch</h2>
-              <p className="text-gray-600 mb-8">
-                Have questions about our services or need assistance with your tax planning? Our team is here to help. Fill out the form or use our contact information below.
-              </p>
-              
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-1">Phone</h3>
-                    <p className="text-gray-600">(555) 123-4567</p>
-                    <p className="text-gray-600">Mon-Fri: 9am-5pm EST</p>
-                  </div>
+      {/* Main Content */}
+      <section className="py-20 px-4 bg-gradient-to-b from-white to-blue-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            {/* Contact Form */}
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <h2 className="text-3xl font-bold text-blue-900 mb-6">Send us a Message</h2>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    placeholder="Enter your name"
+                  />
                 </div>
-                
-                <div className="flex items-start">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-1">Email</h3>
-                    <p className="text-gray-600">info@fincraftconsulting.com</p>
-                    <p className="text-gray-600">We&apos;ll respond within 24 hours</p>
-                  </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    placeholder="Enter your email"
+                  />
                 </div>
-                
-                <div className="flex items-start">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    rows={5}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    placeholder="How can we help you?"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-blue-600 text-white px-6 py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                </button>
+                {submitSuccess && (
+                  <div className="text-green-600 text-center">
+                    Thank you for your message! We'll get back to you soon.
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-1">Office</h3>
-                    <p className="text-gray-600">123 Tax Avenue, Suite 500</p>
-                    <p className="text-gray-600">New York, NY 10001</p>
+                )}
+                {submitError && (
+                  <div className="text-red-600 text-center">
+                    {submitError}
+                  </div>
+                )}
+              </form>
+            </div>
+
+            {/* Contact Information and Map */}
+            <div className="space-y-8">
+              <div className="bg-white rounded-2xl shadow-xl p-8">
+                <h2 className="text-3xl font-bold text-blue-900 mb-6">Contact Information</h2>
+                <div className="space-y-6">
+                  <div className="flex items-start">
+                    <div className="bg-blue-100 p-3 rounded-lg">
+                      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-lg font-semibold text-gray-900">Office Location</h3>
+                      <p className="text-gray-600">123 Business Avenue, Karachi, Pakistan</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="bg-blue-100 p-3 rounded-lg">
+                      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-lg font-semibold text-gray-900">Email</h3>
+                      <p className="text-gray-600">info@taxconsulting.com</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="bg-blue-100 p-3 rounded-lg">
+                      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-lg font-semibold text-gray-900">Phone</h3>
+                      <p className="text-gray-600">+92 123 456 7890</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            
-            {/* Contact Form */}
-            <div className="animate-fade-in animation-delay-200">
-              {submitted ? (
-                <div className="bg-green-50 border border-green-200 text-green-800 p-6 rounded-lg shadow-md animate-fade-in">
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
-                      <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <h3 className="text-xl font-bold">Thank You!</h3>
-                  </div>
-                  <p className="mb-4">Your message has been sent successfully. We&apos;ll get back to you as soon as possible.</p>
-                  <button 
-                    onClick={() => setSubmitted(false)}
-                    className="text-green-700 font-semibold hover:text-green-900 transition-colors duration-300"
-                  >
-                    Send another message
-                  </button>
+
+              {/* Map Section */}
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden group">
+                <div className="relative h-[400px]">
+                  <iframe
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=67.0282,24.8607,67.0282,24.8607&layer=mapnik&marker=24.8607,67.0282"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
+                  <div className="absolute inset-0 bg-gradient-to-t from-blue-900/90 via-blue-900/50 to-transparent pointer-events-none"></div>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-8">
-                  <h2 className="text-2xl font-bold text-blue-800 mb-6">Send Us a Message</h2>
-                  
-                  <div className="mb-6">
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={form.name}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                      required
-                    />
-                  </div>
-                  
-                  <div className="mb-6">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Your Email</label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                      required
-                    />
-                  </div>
-                  
-                  <div className="mb-6">
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Your Message</label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={form.message}
-                      onChange={handleChange}
-                      rows={5}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                      required
-                    ></textarea>
-                  </div>
-                  
-                  <button 
-                    type="submit" 
-                    disabled={isSubmitting}
-                    className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none"
-                  >
-                    {isSubmitting ? (
-                      <span className="flex items-center justify-center">
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Sending...
-                      </span>
-                    ) : 'Send Message'}
-                  </button>
-                </form>
-              )}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Map Section */}
-      <section className="py-16 px-4 bg-gray-50">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold text-blue-800 mb-6 text-center animate-fade-in">Find Us</h2>
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden h-80 animate-fade-in animation-delay-200">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3627857.2369666!2d60.371328!3d30.187117!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38b5d2c56e34d249%3A0x24292e3e5b35e873!2sPakistan!5e0!3m2!1sen!2s!4v1648651234567!5m2!1sen!2s"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Map of Pakistan"
-              className="w-full h-full"
-            ></iframe>
-          </div>
+      {/* CTA Section */}
+      <section className="py-20 px-4 bg-gradient-to-br from-blue-900 to-blue-800 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/50 to-blue-800/50 opacity-10"></div>
+        </div>
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-white mb-6">Ready to Get Started?</h2>
+          <p className="text-xl text-blue-100 mb-8">Schedule a free consultation with our tax experts</p>
+          <a 
+            href="tel:+921234567890" 
+            className="inline-block bg-white text-blue-900 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+          >
+            Call Us Now
+          </a>
         </div>
       </section>
     </main>
