@@ -1,28 +1,46 @@
-import './globals.css';
-import Link from 'next/link';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Chatbot from "@/components/Chatbot";
 
-export const metadata = {
-  title: 'Tax Consulting',
-  description: 'Professional Tax Consulting Services',
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Fincraft Consulting - Tax & Financial Services",
+  description: "Professional tax consulting and financial services for individuals and businesses.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+// Mock email sending function - replace with actual email service
+const sendEmail = async (to: string, name: string, type: string) => {
+  // Simulate email sending delay
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  console.log(`Email sent to ${to}:`, {
+    subject: type === 'login' ? 'Welcome Back!' : 'Welcome to Fincraft Consulting',
+    body: type === 'login' 
+      ? `Welcome back, ${name}! We're glad to see you again.`
+      : `Welcome to Fincraft Consulting, ${name}! Thank you for joining us.`
+  });
+  
+  return true;
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body className="bg-gray-50 min-h-screen">
-        <nav className="bg-white shadow mb-8">
-          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold text-blue-700">Tax Consulting</Link>
-            <div className="space-x-6">
-              <Link href="/about" className="hover:text-blue-700">About</Link>
-              <Link href="/services" className="hover:text-blue-700">Services</Link>
-              <Link href="/templates" className="hover:text-blue-700">Templates</Link>
-              <Link href="/blog" className="hover:text-blue-700">Blog</Link>
-              <Link href="/contact" className="hover:text-blue-700">Contact</Link>
-            </div>
-          </div>
-        </nav>
-        <main>{children}</main>
+      <body className={inter.className}>
+        <Navbar />
+        <main className="min-h-screen">
+          {children}
+        </main>
+        <Chatbot />
+        <Footer />
       </body>
     </html>
   );
