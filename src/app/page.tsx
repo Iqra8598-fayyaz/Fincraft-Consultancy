@@ -10,7 +10,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10"></div>
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 animate-fade-in-up">
-            Fincraft Consulting
+            Fincraft Consulting at your service
           </h1>
           <p className="text-xl md:text-2xl text-blue-100 mb-8 animate-fade-in-up animation-delay-200">
             Trusted tax advice for individuals &amp; businesses. Maximize your returns, stay compliant, and plan for a secure financial future with our expert consultants.
